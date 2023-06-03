@@ -1,3 +1,10 @@
+const client = contentful.createClient({
+  space: "51j86xw4x46q",
+  environment: "master", // defaults to 'master' if not set
+  accessToken: "fVAYaxo53uL_JvW2n0aBTFWL1IAPDazK-1JhpxU5YzQ",
+});
+// console.log(client);
+
 // variables
 const cartBtn = document.querySelector(".cart-btn");
 const closeCartBtn = document.querySelector(".close-cart");
@@ -19,9 +26,10 @@ let buttonsDOM = [];
 class Products {
   async getProducts() {
     try {
+      let contentful = await client.getEntries("comfyHouseProduct");
       let result = await fetch("products.json");
       let data = await result.json();
-      let products = data.items;
+      let products = contentful.items;
       products = products.map((item) => {
         const { title, price } = item.fields;
         const { id } = item.sys;
@@ -168,23 +176,23 @@ class UI {
         cartContent.removeChild(e.target.parentElement.parentElement);
         this.removeItem(e.target.dataset.id);
       } else if (e.target.classList.contains("fa-chevron-up")) {
-        let id = e.target.dataset.id
-        let tempItem = cart.find((item)=> item.id === id)
-        tempItem.amount += 1
-        Storage.setCart(cart)
-        this.setCartValues(cart)
-        e.target.nextElementSibling.innerText = tempItem.amount
+        let id = e.target.dataset.id;
+        let tempItem = cart.find((item) => item.id === id);
+        tempItem.amount += 1;
+        Storage.setCart(cart);
+        this.setCartValues(cart);
+        e.target.nextElementSibling.innerText = tempItem.amount;
       } else if (e.target.classList.contains("fa-chevron-down")) {
-        let id = e.target.dataset.id
-        let tempItem = cart.find((item)=> item.id === id)
-        tempItem.amount = tempItem.amount - 1
+        let id = e.target.dataset.id;
+        let tempItem = cart.find((item) => item.id === id);
+        tempItem.amount = tempItem.amount - 1;
         if (tempItem.amount > 0) {
-            Storage.setCart(cart)
-        this.setCartValues(cart)
-        e.target.previousElementSibling.innerText = tempItem.amount
+          Storage.setCart(cart);
+          this.setCartValues(cart);
+          e.target.previousElementSibling.innerText = tempItem.amount;
         } else {
-            cartContent.removeChild(e.target.parentElement.parentElement)
-            this.removeItem(e.target.dataset.id);
+          cartContent.removeChild(e.target.parentElement.parentElement);
+          this.removeItem(e.target.dataset.id);
         }
       }
     });
