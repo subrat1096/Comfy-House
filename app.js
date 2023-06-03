@@ -163,6 +163,31 @@ class UI {
     clearCartBtn.addEventListener("click", () => {
       this.clearCart();
     });
+    cartContent.addEventListener("click", (e) => {
+      if (e.target.classList.contains("remove-item")) {
+        cartContent.removeChild(e.target.parentElement.parentElement);
+        this.removeItem(e.target.dataset.id);
+      } else if (e.target.classList.contains("fa-chevron-up")) {
+        let id = e.target.dataset.id
+        let tempItem = cart.find((item)=> item.id === id)
+        tempItem.amount += 1
+        Storage.setCart(cart)
+        this.setCartValues(cart)
+        e.target.nextElementSibling.innerText = tempItem.amount
+      } else if (e.target.classList.contains("fa-chevron-down")) {
+        let id = e.target.dataset.id
+        let tempItem = cart.find((item)=> item.id === id)
+        tempItem.amount = tempItem.amount - 1
+        if (tempItem.amount > 0) {
+            Storage.setCart(cart)
+        this.setCartValues(cart)
+        e.target.previousElementSibling.innerText = tempItem.amount
+        } else {
+            cartContent.removeChild(e.target.parentElement.parentElement)
+            this.removeItem(e.target.dataset.id);
+        }
+      }
+    });
   }
   clearCart() {
     let cartItems = cart.map((items) => items.id);
